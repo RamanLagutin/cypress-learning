@@ -1,8 +1,12 @@
 import { loginPage } from '../../pages/login.page';
 import { mainPage } from '../../pages/main.page';
-import { header } from '../../pages/header';
+import { header } from '../../page_elements/header';
+import { actionHeader } from '../../page_elements/action_header';
 import { inboxPage } from '../../pages/inbox.page';
 import { newEmailPage } from '../../pages/newEmail.page';
+import { documentsPage } from '../../pages/documents.page';
+import { trashPage } from '../../pages/trash.page';
+import { moveToTrashModal } from '../../modals/move_to_trash.modal';
 
 describe('User can perform user flow', function () {
   this.beforeEach(() => {
@@ -16,7 +20,7 @@ describe('User can perform user flow', function () {
     cy.location('pathname').should('equal', '/flatx/index.jsp');
 
     header.openInbox();
-    inboxPage.clickOnNewButton();
+    actionHeader.clickOnNewButton();
 
     newEmailPage.sendEmailToMyself();
     newEmailPage.setSubject();
@@ -28,5 +32,24 @@ describe('User can perform user flow', function () {
     inboxPage.checkEmailReceived();
 
     inboxPage.saveAttachedFile();
+    header.openDocuments();
+    documentsPage.checkDocument();
+
+    documentsPage.moveDocumentToTrash();
+
+    documentsPage.openTrash();
+    trashPage.checkDocumentPresent();
+  });
+
+  this.afterAll(() => {
+    header.openInbox();
+    actionHeader.checkAll();
+    actionHeader.clickOnDeleteButton();
+
+    header.openDocuments();
+    actionHeader.checkAll();
+    actionHeader.clickOnMoreButton();
+    actionHeader.clickOnDeleteOption();
+    moveToTrashModal.clickOnYesButton();
   });
 });
