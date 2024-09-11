@@ -14,12 +14,12 @@ export const documentsPage = {
       cy.get(documentsLocator.trash).should('be.visible');
       cy.then(() => {
         const trashCoords = Cypress.$(
-          '[id="doc_tree_trash"]'
+          documentsLocator.trash
         )[0].getBoundingClientRect();
         cy.wrap(trashCoords).as('trashCoords');
 
         const documentCoords = Cypress.$(
-          '[class="GCSDBRWBPJB"]'
+          documentsLocator.document
         )[0].getBoundingClientRect();
 
         cy.wrap(documentCoords).as('documentCoords');

@@ -19,7 +19,6 @@ import './commands';
 import 'cypress-file-upload';
 
 require('cypress-xpath');
-require('@4tw/cypress-drag-drop');
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')

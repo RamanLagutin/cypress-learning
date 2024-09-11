@@ -4,6 +4,7 @@ const newEmailLocator = {
   attachment: 'Attachment',
   attachmentInput: 'input[type=file]',
   sendButton: '#mailSend',
+  fileUploadedIcon: '[class="checkIcon"]',
 };
 
 export const newEmailPage = {
@@ -24,7 +25,7 @@ export const newEmailPage = {
 
       cy.contains('a', newEmailLocator.attachment).click();
       cy.get(newEmailLocator.attachmentInput).attachFile(testData.file_name);
-      cy.wait(300);
+      cy.get(newEmailLocator.fileUploadedIcon).should('be.visible');
 
       cy.task('deleteTxtFile', {
         filename: testData.file_name,
