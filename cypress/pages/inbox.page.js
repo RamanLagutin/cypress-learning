@@ -1,6 +1,7 @@
+import { actionHeader } from '../page_elements/action_header';
+
 const inboxLocator = {
-  refreshButton: '[title="Refresh"]',
-  mailList: '#mailList',
+  mailList: '[id="gwt-uid-9"]',
   lastMail: "(//*[@class='listSubject'])[1]",
   arrowDown: '[class="icon-Arrow-down"]',
   saveInDocuments: 'Save in Documents',
@@ -10,13 +11,33 @@ const inboxLocator = {
 
 export const inboxPage = {
   waitNewEmail: () => {
-    cy.wait(5555);
-    cy.get(inboxLocator.refreshButton).click();
+    cy.get(inboxLocator.mailList)
+      .find('table')
+      .children('tbody')
+      .eq(1)
+      .should('be.visible');
 
-    // cy.get('[id="gwt-uid-9"]')
-    //   .find('table')
-    //   .children('tbody')
-    //   .eq(1)
+    cy.then(() => {
+      const amountOfEmails = Cypress.$(
+        `${inboxLocator.mailList} table tbody:nth-child(3)`
+      )[0].childNodes.length;
+      cy.wrap(amountOfEmails).as('amountOfEmails');
+    });
+
+    cy.get('@amountOfEmails').then((currentAmountOfEmails) => {
+      let tries = 0;
+      while (tries < 15) {
+        let newAmountOfEmails = Cypress.$(
+          `${inboxLocator.mailList} table tbody:nth-child(3)`
+        )[0].childNodes.length;
+        if (newAmountOfEmails > currentAmountOfEmails) {
+          i = 15;
+          return;
+        }
+        actionHeader.clickOnRefreshButton();
+        tries++;
+      }
+    });
   },
   clickOnReceivedEmail: () => {
     cy.xpath(inboxLocator.lastMail).click();

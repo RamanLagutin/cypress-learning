@@ -42,11 +42,8 @@ describe('User can perform user flow', function () {
   });
 
   this.afterAll(() => {
-    header.openInbox();
-    actionHeader.checkAll();
-    actionHeader.clickOnDeleteButton();
-
     header.openDocuments();
+    actionHeader.clickOnRefreshButton();
     actionHeader.checkAll();
     actionHeader.clickOnMoreButton();
     actionHeader.clickOnDeleteOption();

@@ -13,7 +13,9 @@ export const newEmailPage = {
   },
   setSubject: () => {
     cy.fixture('test-data').then((testData) => {
-      cy.get(newEmailLocator.subject).type(testData.test_email_subject);
+      cy.get(newEmailLocator.subject).type(testData.test_email_subject, {
+        force: true,
+      });
     });
   },
   addAttachment: () => {

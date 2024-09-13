@@ -1,4 +1,5 @@
 const actionHeaderLocator = {
+  refreshButton: '[title="Refresh"]',
   newButton: '#mailNewBtn',
   checkAll: '[title="Select all"]',
   deleteButton: '[title="To Trash"]',
@@ -7,11 +8,16 @@ const actionHeaderLocator = {
 };
 
 export const actionHeader = {
+  clickOnRefreshButton: () => {
+    cy.get(actionHeaderLocator.refreshButton).click({ force: true });
+    cy.wait(300);
+  },
   clickOnNewButton: () => {
     cy.get(actionHeaderLocator.newButton).click();
   },
   checkAll: () => {
     cy.get(actionHeaderLocator.checkAll).click();
+    cy.wait(400);
   },
   clickOnDeleteButton: () => {
     cy.get(actionHeaderLocator.deleteButton).click();
