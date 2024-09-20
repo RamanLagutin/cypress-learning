@@ -1,6 +1,7 @@
-import { actionHeader } from '../page_elements/action_header';
+import { basePage } from './base.page';
 
 const inboxLocator = {
+  newEmailButton: '#mailNewBtn',
   mailList: '[id="gwt-uid-9"]',
   lastMail: "(//*[@class='listSubject'])[1]",
   arrowDown: '[class="icon-Arrow-down"]',
@@ -10,6 +11,9 @@ const inboxLocator = {
 };
 
 export const inboxPage = {
+  clickOnNewEmailButton: () => {
+    cy.get(inboxLocator.newEmailButton).click();
+  },
   waitNewEmail: (mailSubject) => {
     cy.get(inboxLocator.mailList)
       .find('table')
@@ -28,7 +32,7 @@ export const inboxPage = {
           i = 15;
           return;
         }
-        actionHeader.clickOnRefreshButton();
+        basePage.actions.clickOnRefreshButton();
         tries++;
       }
     });

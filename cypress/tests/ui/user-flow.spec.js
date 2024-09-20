@@ -1,13 +1,11 @@
 import { loginPage } from '../../pages/login.page';
 import { mainPage } from '../../pages/main.page';
-import { header } from '../../page_elements/header';
-import { actionHeader } from '../../page_elements/action_header';
 import { inboxPage } from '../../pages/inbox.page';
 import { newEmailPage } from '../../pages/newEmail.page';
 import { documentsPage } from '../../pages/documents.page';
 import { trashPage } from '../../pages/trash.page';
-import { moveToTrashModal } from '../../modals/move_to_trash.modal';
 import { generateMailSubject } from '../../support/support';
+import { basePage } from '../../pages/base.page';
 
 describe('User can perform user flow', function () {
   let mailSubject = '';
@@ -23,8 +21,8 @@ describe('User can perform user flow', function () {
     loginPage.clickOnEnterButton();
     cy.location('pathname').should('equal', '/flatx/index.jsp');
 
-    header.openInbox();
-    actionHeader.clickOnNewButton();
+    basePage.header.openInbox();
+    inboxPage.clickOnNewEmailButton();
     newEmailPage.sendTestEmailToUser();
     newEmailPage.setSubject(mailSubject);
     newEmailPage.addAttachment();
@@ -35,7 +33,7 @@ describe('User can perform user flow', function () {
     inboxPage.checkEmailReceived(mailSubject);
 
     inboxPage.saveAttachedFile();
-    header.openDocuments();
+    basePage.header.openDocuments();
     documentsPage.checkDocument();
 
     documentsPage.moveDocumentToTrash();
@@ -45,11 +43,11 @@ describe('User can perform user flow', function () {
   });
 
   this.afterAll(() => {
-    header.openDocuments();
-    actionHeader.clickOnRefreshButton();
-    actionHeader.checkAll();
-    actionHeader.clickOnMoreButton();
-    actionHeader.clickOnDeleteOption();
-    moveToTrashModal.clickOnYesButton();
+    basePage.header.openDocuments();
+    basePage.actions.clickOnRefreshButton();
+    basePage.actions.checkAll();
+    basePage.actions.clickOnMoreButton();
+    basePage.actions.clickOnDeleteOption();
+    basePage.actions.clickOnYesButton();
   });
 });
