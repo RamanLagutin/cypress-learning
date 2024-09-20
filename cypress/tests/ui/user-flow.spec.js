@@ -7,9 +7,13 @@ import { newEmailPage } from '../../pages/newEmail.page';
 import { documentsPage } from '../../pages/documents.page';
 import { trashPage } from '../../pages/trash.page';
 import { moveToTrashModal } from '../../modals/move_to_trash.modal';
+import { generateMailSubject } from '../../support/support';
 
 describe('User can perform user flow', function () {
+  let mailSubject = '';
+
   this.beforeEach(() => {
+    mailSubject = generateMailSubject();
     cy.visit(Cypress.env('baseLink'));
   });
 
@@ -21,15 +25,14 @@ describe('User can perform user flow', function () {
 
     header.openInbox();
     actionHeader.clickOnNewButton();
-
-    newEmailPage.sendEmailToMyself();
-    newEmailPage.setSubject();
+    newEmailPage.sendTestEmailToUser();
+    newEmailPage.setSubject(mailSubject);
     newEmailPage.addAttachment();
     newEmailPage.sendEmail();
 
-    inboxPage.waitNewEmail();
+    inboxPage.waitNewEmail(mailSubject);
     inboxPage.clickOnReceivedEmail();
-    inboxPage.checkEmailReceived();
+    inboxPage.checkEmailReceived(mailSubject);
 
     inboxPage.saveAttachedFile();
     header.openDocuments();

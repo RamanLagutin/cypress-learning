@@ -10,7 +10,7 @@ const inboxLocator = {
 };
 
 export const inboxPage = {
-  waitNewEmail: () => {
+  waitNewEmail: (mailSubject) => {
     cy.get(inboxLocator.mailList)
       .find('table')
       .children('tbody')
@@ -18,19 +18,13 @@ export const inboxPage = {
       .should('be.visible');
 
     cy.then(() => {
-      const amountOfEmails = Cypress.$(
-        `${inboxLocator.mailList} table tbody:nth-child(3)`
-      )[0].childNodes.length;
-      cy.wrap(amountOfEmails).as('amountOfEmails');
-    });
-
-    cy.get('@amountOfEmails').then((currentAmountOfEmails) => {
       let tries = 0;
       while (tries < 15) {
-        let newAmountOfEmails = Cypress.$(
-          `${inboxLocator.mailList} table tbody:nth-child(3)`
-        )[0].childNodes.length;
-        if (newAmountOfEmails > currentAmountOfEmails) {
+        let lastEmailSubject = Cypress.$(
+          `${inboxLocator.mailList} table tbody`
+        )[0].title;
+
+        if (lastEmailSubject === mailSubject) {
           i = 15;
           return;
         }
@@ -42,12 +36,8 @@ export const inboxPage = {
   clickOnReceivedEmail: () => {
     cy.xpath(inboxLocator.lastMail).click();
   },
-  checkEmailReceived: () => {
-    cy.fixture('test-data').then((testData) => {
-      cy.xpath(`//span[text()='${testData.test_email_subject}']`).should(
-        'exist'
-      );
-    });
+  checkEmailReceived: (mailSubject) => {
+    cy.xpath(`//span[text()='${mailSubject}']`).should('exist');
   },
   saveAttachedFile: () => {
     cy.fixture('test-data').then((testData) => {

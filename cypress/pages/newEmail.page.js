@@ -8,14 +8,12 @@ const newEmailLocator = {
 };
 
 export const newEmailPage = {
-  sendEmailToMyself: () => {
+  sendTestEmailToUser: () => {
     cy.get(newEmailLocator.receiver).type(Cypress.env('email'));
   },
-  setSubject: () => {
-    cy.fixture('test-data').then((testData) => {
-      cy.get(newEmailLocator.subject).type(testData.test_email_subject, {
-        force: true,
-      });
+  setSubject: (mailSubject) => {
+    cy.get(newEmailLocator.subject).type(mailSubject, {
+      force: true,
     });
   },
   addAttachment: () => {
