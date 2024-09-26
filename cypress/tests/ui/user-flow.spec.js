@@ -1,53 +1,53 @@
-import { loginPage } from '../../pages/login.page';
-import { mainPage } from '../../pages/main.page';
-import { inboxPage } from '../../pages/inbox.page';
-import { newEmailPage } from '../../pages/newEmail.page';
-import { documentsPage } from '../../pages/documents.page';
-import { trashPage } from '../../pages/trash.page';
-import { generateMailSubject } from '../../support/support';
-import { basePage } from '../../pages/base.page';
+import { Utils } from '../../support/helpers/utils/utils';
+import { MainPage, LoginPage, InboxPage, DocumentsPage } from '../../pages';
+
+const utils = new Utils();
+const mainPage = new MainPage();
+const loginPage = new LoginPage();
+const inboxPage = new InboxPage();
+const documentsPage = new DocumentsPage();
 
 describe('User can perform user flow', function () {
   let mailSubject = '';
 
+  this.beforeAll(() => {
+    cy.cleanEnvironment();
+  });
+
   this.beforeEach(() => {
-    mailSubject = generateMailSubject();
-    cy.visit(Cypress.env('baseLink'));
+    mailSubject = utils.generateMailSubject();
+    cy.visit(Cypress.env('mailFenceMainPage'));
   });
 
   it('should Log In, Attach file to email, send email, read it, and move documents to trash', function () {
-    mainPage.clickOnLogin();
-    loginPage.enterCredentials();
+    const username = Cypress.env('defaultUser');
+    const password = Cypress.env('defaultUserPassword');
+    const emailRecipient = Cypress.env('defaultUserEmail');
+    const fileName = mailSubject + '.txt';
+
+    mainPage.clickOnLoginButton();
+    loginPage.enterUserCredentials(username, password);
     loginPage.clickOnEnterButton();
-    cy.location('pathname').should('equal', '/flatx/index.jsp');
+    loginPage.CheckUserIsAuthorized();
 
-    basePage.header.openInbox();
-    inboxPage.clickOnNewEmailButton();
-    newEmailPage.sendTestEmailToUser();
-    newEmailPage.setSubject(mailSubject);
-    newEmailPage.addAttachment();
-    newEmailPage.sendEmail();
+    inboxPage.actionBar.clickOnNewEmailButton();
+    inboxPage.newEmail.setEmailTo(emailRecipient);
+    inboxPage.newEmail.setSubject(mailSubject);
+    inboxPage.newEmail.addAttachment(fileName);
+    inboxPage.newEmail.checkAttachmentIsUploaded();
+    inboxPage.newEmail.clickOnSendEmailButton();
 
-    inboxPage.waitNewEmail(mailSubject);
-    inboxPage.clickOnReceivedEmail();
-    inboxPage.checkEmailReceived(mailSubject);
+    inboxPage.waitForEmail(mailSubject);
 
-    inboxPage.saveAttachedFile();
-    basePage.header.openDocuments();
-    documentsPage.checkDocument();
+    inboxPage.clickOnEmail(mailSubject);
 
-    documentsPage.moveDocumentToTrash();
+    inboxPage.saveToDocumentsAttachedFile(fileName);
 
-    documentsPage.openTrash();
-    trashPage.checkDocumentPresent();
-  });
+    inboxPage.header.openDocuments();
+    documentsPage.checkDocumentIsDisplayed(fileName);
 
-  this.afterAll(() => {
-    basePage.header.openDocuments();
-    basePage.actions.clickOnRefreshButton();
-    basePage.actions.checkAll();
-    basePage.actions.clickOnMoreButton();
-    basePage.actions.clickOnDeleteOption();
-    basePage.actions.clickOnYesButton();
+    documentsPage.moveDocumentToTrash(fileName);
+    documentsPage.openTrashFolder();
+    documentsPage.checkDocumentIsDisplayed(fileName);
   });
 });

@@ -1,25 +1,26 @@
-// ***********************************************
-// This example commands.js shows you how to
-// create various custom commands and overwrite
-// existing commands.
-//
-// For more comprehensive examples of custom
-// commands please read more here:
-// https://on.cypress.io/custom-commands
-// ***********************************************
-//
-//
-// -- This is a parent command --
-// Cypress.Commands.add('login', (email, password) => { ... })
-//
-//
-// -- This is a child command --
-// Cypress.Commands.add('drag', { prevSubject: 'element'}, (subject, options) => { ... })
-//
-//
-// -- This is a dual command --
-// Cypress.Commands.add('dismiss', { prevSubject: 'optional'}, (subject, options) => { ... })
-//
-//
-// -- This will overwrite an existing command --
-// Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
+import { MainPage, LoginPage, InboxPage, DocumentsPage } from '../pages';
+
+Cypress.Commands.add('cleanEnvironment', () => {
+  const mainPage = new MainPage();
+  const loginPage = new LoginPage();
+  const inboxPage = new InboxPage();
+  const documentsPage = new DocumentsPage();
+
+  const username = Cypress.env('defaultUser');
+  const password = Cypress.env('defaultUserPassword');
+
+  cy.visit(Cypress.env('mailFenceMainPage'));
+
+  mainPage.clickOnLoginButton();
+  loginPage.enterUserCredentials(username, password);
+  loginPage.clickOnEnterButton();
+  loginPage.CheckUserIsAuthorized();
+  inboxPage.header.openDocuments();
+  documentsPage.openTrashFolder();
+  documentsPage.actionBar.clickOnRefreshButton(500);
+  documentsPage.actionBar.selectAll();
+  documentsPage.actionBar.clickOnMoreButton();
+  documentsPage.actionBar.clickOnDeleteOptionIfEnabled();
+  documentsPage.header.clickOnUser();
+  documentsPage.header.chooseLogOutOption();
+});
